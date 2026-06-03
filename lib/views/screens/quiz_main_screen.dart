@@ -83,27 +83,44 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
   }
 
   void _handleAnswer(int selection) async {
-    try {
-      await _audioPlayer.play(AssetSource('Audio/button.mp3'));
-    } catch (e) {
-      debugPrint('Audio play error: $e');
-    }
-
     _lastSelection = selection;
     final isCorrect = selection == _quiz.correctAnswer;
 
-    // 오답일 경우 처리
+    try {
+      // 1. 상태 초기화를 위해 먼저 정지
+      await _audioPlayer.stop();
+
+      // 2. 재생 시작과 함께 [완료 이벤트 vs 400ms 타이머] 중 먼저 끝나는 쪽 대기
+      // 이를 통해 기기 지연에 상관없이 빠른 응답성(0.4초 내외) 확보
+      await Future.wait([
+        _audioPlayer.play(AssetSource('Audio/button.mp3')),
+        Future.any([
+          _audioPlayer.onPlayerComplete.first,
+          Future.delayed(const Duration(milliseconds: 400)),
+        ]),
+      ]);
+    } catch (e) {
+      debugPrint('Audio hybrid performance error: $e');
+    }
+
+    if (!mounted) return;
+
+    // 3. 소리가 끝나자마자 즉시 상태 변경하여 영상/이미지 노출
+    setState(() {
+      _currentState = isCorrect ? QuizState.correct : QuizState.wrong;
+    });
+
+    // 오답일 경우 설명 텍스트 타이밍 조정
     if (!isCorrect) {
-      // 3.5초 뒤에 표시 (0.5초 대기 후 영상 시작 + 3초 후 힌트)
-      Future.delayed(const Duration(milliseconds: 3500), () {
+      // 영상 시작 시점에 맞춰 3초 후 표시
+      Future.delayed(const Duration(milliseconds: 3000), () {
         if (mounted && _currentState == QuizState.wrong) {
           setState(() {
             _showExplanation = true;
           });
         }
       });
-      // 표시 후 4초 뒤(총 7.5초 뒤)에 다시 숨김
-      Future.delayed(const Duration(milliseconds: 7500), () {
+      Future.delayed(const Duration(milliseconds: 7000), () {
         if (mounted && _currentState == QuizState.wrong) {
           setState(() {
             _showExplanation = false;
@@ -111,15 +128,6 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
         }
       });
     }
-
-    // 0.5초 대기 후 상태 변경 (터치 피드백이 충분히 보인 뒤 영상 전환)
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        setState(() {
-          _currentState = isCorrect ? QuizState.correct : QuizState.wrong;
-        });
-      }
-    });
   }
 
   @override
