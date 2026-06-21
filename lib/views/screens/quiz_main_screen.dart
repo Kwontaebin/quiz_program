@@ -225,17 +225,17 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
       children: [
         Image.asset(imagePath, fit: BoxFit.cover),
         Positioned(
-          top: 455.h,
+          top: 438.h,
           left: 300.w,
           right: 300.w,
           child: Column(
             children: [
               _buildAnswerBox(controller, 1),
-              SizedBox(height: 53.h),
+              SizedBox(height: 48.h),
               _buildAnswerBox(controller, 2),
-              SizedBox(height: 53.h),
+              SizedBox(height: 48.h),
               _buildAnswerBox(controller, 3),
-              SizedBox(height: 53.h),
+              SizedBox(height: 48.h),
               _buildAnswerBox(controller, 4),
             ],
           ),
