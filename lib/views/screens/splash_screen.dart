@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import '../../controllers/quiz_controller.dart';
 import '../../router/router.dart';
 import '../widgets/video_player_widget.dart';
 
@@ -20,11 +18,11 @@ class SplashScreen extends StatelessWidget {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. 전체 화면 비디오
-          SizedBox.expand(
+          // 1. 전체 화면 비디오 (반복 재생)
+          const SizedBox.expand(
             child: VideoPlayerWidget(
               assetPath: 'assets/splash.mp4',
-              onEnded: () => _navigateToNext(context),
+              isLooping: true,
             ),
           ),
 

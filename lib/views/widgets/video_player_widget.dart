@@ -4,11 +4,13 @@ import 'package:video_player/video_player.dart';
 class VideoPlayerWidget extends StatefulWidget {
   final String assetPath;
   final VoidCallback? onEnded;
+  final bool isLooping;
 
   const VideoPlayerWidget({
     super.key,
     required this.assetPath,
     this.onEnded,
+    this.isLooping = false,
   });
 
   @override
@@ -54,6 +56,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _isInitialized = true;
       });
       
+      if (widget.isLooping) {
+        await _controller!.setLooping(true);
+      }
+      
       _controller!.addListener(_videoListener);
       await _controller!.play();
     } catch (e) {
@@ -62,6 +68,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   void _videoListener() {
+    if (widget.isLooping) return;
     if (_controller != null && _controller!.value.position >= _controller!.value.duration) {
       _controller!.removeListener(_videoListener);
       widget.onEnded?.call();
