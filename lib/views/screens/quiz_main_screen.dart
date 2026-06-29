@@ -140,7 +140,7 @@ class _QuizMainScreenState extends State<QuizMainScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SizedBox.expand(child: _buildContent()),
+      body: SafeArea(child: SizedBox.expand(child: _buildContent())),
     );
   }
 

@@ -16,26 +16,25 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // 1. 전체 화면 비디오 (반복 재생)
-          const SizedBox.expand(
-            child: VideoPlayerWidget(
-              assetPath: 'assets/splash.mp4',
-              isLooping: true,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // 1. 전체 화면 비디오 (반복 재생)
+            const SizedBox.expand(
+              child: VideoPlayerWidget(assetPath: 'assets/splash.mp4', isLooping: true),
             ),
-          ),
 
-          // 2. 특정 터치 영역 (두루마리 부분)
-          // 스크린샷 가이드에 맞춰 가로 1100, 세로 480 정도로 조정
-          Center(
-            child: GestureDetector(
-              onTap: () => _navigateToNext(context),
-              behavior: HitTestBehavior.opaque,
-              child: SizedBox(width: 1100.w, height: 340.h),
+            // 2. 특정 터치 영역 (두루마리 부분)
+            // 스크린샷 가이드에 맞춰 가로 1100, 세로 480 정도로 조정
+            Center(
+              child: GestureDetector(
+                onTap: () => _navigateToNext(context),
+                behavior: HitTestBehavior.opaque,
+                child: SizedBox(width: 1100.w, height: 340.h),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
